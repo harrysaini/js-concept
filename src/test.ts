@@ -43,7 +43,19 @@ console.log(a.then(() => {}));
 
 let rej = MyPromise.reject('a');
 console.log(rej);
-rej.catch(() => {
+rej.then(() => {}, () => {
     console.log('a');
 });
 
+
+let newP = MyPromise.resolve('abc');
+
+newP.then((val) => {
+    console.log(`resolved 1 ${val}`)
+});
+
+newP.then((val) => {
+    console.log(`resolved 2 ${val}`)
+});
+
+console.log('Should be printed first');

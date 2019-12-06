@@ -59,6 +59,9 @@ export class MyPromise<T> {
             }
             this.error = err;
             this.state = 'REJECTED';
+            if(!this.catchFunctionsCallbacks.length) {
+                throw new Error(`Uncaught (in promise) ${this.error}`);
+            }
             this.catchFunctionsCallbacks.forEach((callback) => {
                 callback(this.value);
             });
@@ -77,21 +80,25 @@ export class MyPromise<T> {
         return new MyPromise((resolve, reject) => {
 
             const handleResolveFunction = () => {
-                try {
-                    const returnVal = resolveFunction(this.value);
-                    this.handlerFunctionReturnOperation(returnVal, resolve, reject);
-                } catch (err) {
-                    reject(err);
-                }
+                setImmediate(() => {
+                    try {
+                        const returnVal = resolveFunction(this.value);
+                        this.handlerFunctionReturnOperation(returnVal, resolve, reject);
+                    } catch (err) {
+                        reject(err);
+                    }
+                });
             }
 
             const handleRejectFunction = () => {
-                try {
-                    const returnVal = rejectFunction(this.error);
-                    this.handlerFunctionReturnOperation(returnVal, resolve, reject);
-                } catch (err) {
-                    reject(err);
-                }
+                setImmediate(() => {
+                    try {
+                        const returnVal = rejectFunction(this.error);
+                        this.handlerFunctionReturnOperation(returnVal, resolve, reject);
+                    } catch (err) {
+                        reject(err);
+                    }
+                });
             }
 
 
